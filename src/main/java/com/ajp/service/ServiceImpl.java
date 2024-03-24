@@ -17,7 +17,6 @@ import com.ajp.utility.UtilityConfig;
 
 public class ServiceImpl implements Service,TransactionsService{
 	
-		
 	Session session;
 	Transaction transaction;
 
@@ -65,7 +64,7 @@ public class ServiceImpl implements Service,TransactionsService{
 		
 	}
 
-    public void addAccountToBank(String bankId,Account account) {
+        public void addAccountToBank(String bankId,Account account) {
 		try {
 		session=UtilityConfig.getSession();
 		transaction=session.beginTransaction();
@@ -204,15 +203,12 @@ public class ServiceImpl implements Service,TransactionsService{
 		session=UtilityConfig.getSession();
 		Bank bid=session.load(Bank.class, id);
 		if(bid==null) {
-			throw new InvalidInputException("Enter valid data....");
+			throw new InvalidBankDetailsException("Enter valid data....");
 		}else {
 		System.out.println("Bank details : "+bid);
 		}
 		}
-		catch (ObjectNotFoundException e) {
-	        System.out.println("Bank not found with ID: " + id);
-	    } 
-		catch (InvalidInputException e) {
+		catch (InvalidBankDetailsException e) {
 			e.printStackTrace();
 		}		
 	}
@@ -221,7 +217,17 @@ public class ServiceImpl implements Service,TransactionsService{
 		try {
 		session=UtilityConfig.getSession();
 		Customer cid=session.load(Customer.class, id);
-		System.out.println("customer Details:"+cid);
+		if(cid==null) {
+			throw new InvalidBankDetailsException("Enter valid data....");
+		}else {
+		System.out.println("Customer details : "+cid);
+		}
+		}
+		catch (ObjectNotFoundException e) {
+	        System.out.println("Customer not found with ID: " + id);
+	    }
+		catch (InvalidBankDetailsException e) {
+			System.out.println("Enter valid data...");
 		}finally {
 		session.close();
 		}		
@@ -231,11 +237,21 @@ public class ServiceImpl implements Service,TransactionsService{
 		try {
 		session = UtilityConfig.getSession();
         Account aid = session.load(Account.class, id);
-        System.out.println("Account Details : ");
-        System.out.println("ID: " + aid.getAccountNumber());
-        System.out.println("AccountType : "+aid.getAccountType());
-        System.out.println("Balance: " + aid.getBalance());
-       } finally {
+        if(aid==null) {
+			throw new InvalidBankDetailsException("Enter valid data....");
+		}else {
+			System.out.println("Account Details : ");
+	        System.out.println("ID: " + aid.getAccountNumber());
+	        System.out.println("AccountType : "+aid.getAccountType());
+	        System.out.println("Balance: " + aid.getBalance());
+		}
+       }
+		catch (ObjectNotFoundException e) {
+	        System.out.println("Account not found with ID: " + id);
+	    }  
+		catch (InvalidBankDetailsException e) {
+			System.out.println("Enter valid data....");
+	} finally {
     	session.close();
        }		
 	}
@@ -244,18 +260,25 @@ public class ServiceImpl implements Service,TransactionsService{
 		try {
 			session = UtilityConfig.getSession();
 	        Transactions tid = session.load(Transactions.class, id);
-	      
+	        if(tid==null) {
+				throw new InvalidBankDetailsException("Enter valid data....");
+			}else {
 	        System.out.println("Transaction Details : "+tid);
-	        
-	       } finally {
+			}
+	       } 
+		catch (ObjectNotFoundException e) {
+		        System.out.println("Transaction not found with ID: " + id);
+		    }
+		catch (InvalidBankDetailsException e) {
+	    	   System.out.println("Enter valid data...");
+		} finally {
 	    	session.close();
 	     }
 		
 	}
 	
-}
-
-
+}	
+	
 	
 
 	
